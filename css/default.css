@@ -1,0 +1,21 @@
+ul#chat-list, li.chat-msg {
+	list-style-type: none;
+	margin-left: 0px;
+	padding-left: 0px;
+}
+
+div#chat-box {
+	height: 240px;
+	width: 180px;
+	border: 1px solid #ddd;
+	overflow: hidden;
+}
+
+li.chat-msg {
+	padding: 3px;
+	border-bottom: 1px solid #ddd;
+}
+
+span.chat-user {
+	font-weight: bold;
+}

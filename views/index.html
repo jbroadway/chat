@@ -1,0 +1,62 @@
+<script>
+var chat = (function ($) {
+	var c = {};
+
+	c.pusher = new Pusher ('{{ api_key }}');
+	c.url = '/chat/speak/{{ channel }}';
+	c.channel;
+
+	c.init = function () {
+		c.pusher = new Pusher ('{{ api_key }}');
+		c.channel = c.pusher.subscribe ('{{ channel }}');
+		c.channel.bind ('chat_message', function (data) {
+			if (data.actor.displayName == '{{ name }}') {
+				// ignore your own messages
+				return;
+			}
+
+			chat.add_msg ({
+				name: data.actor.displayName,
+				msg: data.body
+			});
+		});
+	};
+
+	c.add_msg = function (data) {
+		$('#chat-list').append ('<li class="chat-msg"><span class="chat-user">' + data.name + ':</strong> <span class="chat-text">' + data.msg + '</span></li>');
+		$('#chat-box').scrollTop (10000);
+	};
+
+	c.speak = function (f) {
+		var el = f.elements['chat-input'],
+			data = {msg: el.value, name: '{{ name }}'};
+
+		el.value = '';
+		el.focus ();
+
+		c.add_msg (data);
+
+		$.post (c.url, data, function (res) {});
+
+		return false;
+	};
+
+	return c;
+}(jQuery));
+
+$(function () {
+	chat.init ();
+	$('#chat-input').focus ();
+});
+</script>
+
+<div id="chat">
+	<div id="chat-box">
+		<ul id="chat-list"></ul>
+	</div>
+
+	<form id="chat-form" onsubmit="return chat.speak (this)">
+		<input type="text" name="chat-input" id="chat-input" />
+		<input type="submit" value="{" Send "}" id="chat-submit" />
+	</form>
+</div>
